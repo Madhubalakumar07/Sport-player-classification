@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Player Classifier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <main class="app-shell">
+        <section class="hero">
+            <div class="hero__copy">
+                <p class="hero__eyebrow">9-player sports model</p>
+                <h1>Classify a face against the full roster.</h1>
+                <p class="hero__lede">
+                    Upload an image, detect the face, and compare it against all nine players loaded from names_scale.json.
+                </p>
+            </div>
+            <div class="hero__stat">
+                <span class="hero__stat-label">Players loaded</span>
+                <strong>{{ player_count }}</strong>
+                <span class="hero__stat-note">Unique class number per player</span>
+            </div>
+        </section>
+
+        <section class="content-grid">
+            <div class="gallery-panel">
+                <div class="section-head">
+                    <div>
+                        <p class="section-head__label">Roster</p>
+                        <h2>Reference players</h2>
+                    </div>
+                    <p class="section-head__note">The model output keys map directly to the cards below.</p>
+                </div>
+
+                <div class="player-grid">
+                    {% for player in players %}
+                    <article class="player-card" data-player="{{ player.key }}">
+                        <div class="player-card__media">
+                            <img src="{{ url_for('static', filename=player.image) }}" alt="{{ player.display_name }}">
+                        </div>
+                        <div class="player-card__body">
+                            <span class="player-card__badge">#{{ player.class_num }}</span>
+                            <h3 class="player-card__name">{{ player.display_name }}</h3>
+                            <p class="player-card__meta">{{ player.key }}</p>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <aside class="workspace-panel">
+                <div class="upload-card">
+                    <div class="section-head section-head--compact">
+                        <div>
+                            <p class="section-head__label">Analyze</p>
+                            <h2>Upload an image</h2>
+                        </div>
+                        <span id="selectedFileName" class="upload-card__file">No file selected</span>
+                    </div>
+
+                    <label for="imageInput" id="dropZone" class="drop-zone">
+                        <div class="drop-zone__icon">↕</div>
+                        <div>
+                            <strong>Drop an image here</strong>
+                            <p>or click to browse your device</p>
+                        </div>
+                    </label>
+                    <input id="imageInput" class="sr-only" type="file" accept="image/*">
+
+                    <div class="preview-frame">
+                        <img id="previewImage" class="preview-frame__image is-hidden" alt="Selected preview">
+                        <div id="previewPlaceholder" class="preview-frame__placeholder">
+                            <span>Preview</span>
+                            <p>Choose a photo to inspect it before classification.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button id="classifyButton" class="button button--primary" type="button">Classify image</button>
+                        <button id="resetButton" class="button button--ghost" type="button">Reset</button>
+                    </div>
+
+                    <p id="statusLine" class="status-line" aria-live="polite">Ready when you are.</p>
+                </div>
+
+                <div id="error" class="alert-panel is-hidden" role="alert">
+                    The classifier could not detect a face with at least two eyes. Try a clearer, front-facing photo.
+                </div>
+
+                <section id="resultHolder" class="result-panel is-hidden" aria-live="polite">
+                    <div class="section-head section-head--compact">
+                        <div>
+                            <p class="section-head__label">Prediction</p>
+                            <h2 id="predictionTitle">Awaiting analysis</h2>
+                        </div>
+                        <span id="predictionConfidence" class="confidence-chip">--</span>
+                    </div>
+                    <div id="predictionCard" class="result-panel__card"></div>
+                </section>
+
+                <section class="scoreboard-card">
+                    <div class="section-head section-head--compact">
+                        <div>
+                            <p class="section-head__label">Probabilities</p>
+                            <h2>Class distribution</h2>
+                        </div>
+                        <p class="section-head__note">All classes refresh after every classification.</p>
+                    </div>
+
+                    <div class="scoreboard-wrap">
+                        <table id="classTable" class="scoreboard">
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Class #</th>
+                                    <th>Probability</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for player in players %}
+                                <tr data-score-row="{{ player.key }}">
+                                    <td>{{ player.display_name }}</td>
+                                    <td>{{ player.class_num }}</td>
+                                    <td>
+                                        <div class="scorebar">
+                                            <div id="bar_{{ player.key|replace(' ', '_') }}" class="scorebar__fill"></div>
+                                            <span id="score_{{ player.key|replace(' ', '_') }}" class="scorebar__value">--</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </aside>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</body>
+</html>
