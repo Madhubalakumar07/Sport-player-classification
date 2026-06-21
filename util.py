@@ -88,10 +88,16 @@ def load_saved_artifacts():
         for k, v in __class_name_to_number.items()
     }
 
-    __model = _load_model_artifact(
+    model_path = _resolve_artifact_file(
         Path("artifacts") / "celebrity_classification_model.pkl",
         Path("artifacts") / "saved_model.pkl",
     )
+
+    print("Loading model from:", model_path)
+
+    __model = joblib.load(model_path)
+
+    print(type(__model))
 
     print("Artifacts loaded")
 
