@@ -99,7 +99,7 @@ def load_saved_artifacts():
 
     print(type(__model))
 
-    print("Artifacts loaded")
+    print("Artifacts loaded")  
 
 
 def class_number_to_name(class_num):

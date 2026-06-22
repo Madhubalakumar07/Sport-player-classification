@@ -222,6 +222,14 @@ input {
   object-fit: cover;
 }
 
+.player-card[data-player="virat kohli"] .player-card__media img {
+  object-position: center 18%;
+}
+
+.player-card[data-player="max verstappen"] .player-card__media img {
+  object-position: center 20%;
+}
+
 .player-card__body {
   padding: 14px 16px 16px;
 }
